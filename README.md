@@ -2,6 +2,8 @@
 
 Easy way to create .vue files in your project.
 
+- [Marketplace](https://marketplace.visualstudio.com/items?itemName=pantelav.vue-files-generator)
+
 ## Features
 
 Call the context menu on the folder and select "Vue: create file".
