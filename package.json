@@ -1,0 +1,110 @@
+{
+  "name": "vue-files-generator",
+  "displayName": "Vue files generator",
+  "description": "Easy way to create .vue files in your project.",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.78.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vue-files-generator.createFile",
+        "title": "Vue: create file"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "vue-files-generator.createFile",
+          "when": "explorerResourceIsFolder"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Vue files generator",
+      "properties": {
+        "vueFilesGenerator.settings.mode": {
+          "type": "string",
+          "default": "capi",
+          "description": "Compositon or Option API.",
+          "enum": ["capi", "oapi"]
+        },
+        "vueFilesGenerator.settings.ts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use typescript in components."
+        },
+        "vueFilesGenerator.settings.scoped": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use scoped styles."
+        },
+        "vueFilesGenerator.settings.css": {
+          "type": "string",
+          "default": "css",
+          "description": "Css preprocessor (css, scss, sass).",
+          "enum": ["css", "scss", "sass"]
+        },
+        "vueFilesGenerator.settings.ref": {
+          "type": "boolean",
+          "default": true,
+          "description": "Import 'ref'."
+        },
+        "vueFilesGenerator.settings.computed": {
+          "type": "boolean",
+          "default": false,
+          "description": "Import 'computed'."
+        },
+        "vueFilesGenerator.settings.reactive": {
+          "type": "boolean",
+          "default": false,
+          "description": "Import 'reactive'."
+        },
+        "vueFilesGenerator.settings.onMounted": {
+          "type": "boolean",
+          "default": false,
+          "description": "Import 'onMounted'."
+        },
+        "vueFilesGenerator.settings.watch": {
+          "type": "boolean",
+          "default": false,
+          "description": "Import 'watch'."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.1.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "20.2.5",
+    "@types/vscode": "^1.78.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "@vscode/test-electron": "^2.3.2",
+    "eslint": "^8.41.0",
+    "glob": "^8.1.0",
+    "html-webpack-plugin": "^5.5.1",
+    "html-webpack-tags-plugin": "^3.0.2",
+    "mocha": "^10.2.0",
+    "ts-loader": "^9.4.3",
+    "typescript": "^5.1.3",
+    "webpack": "^5.85.0",
+    "webpack-cli": "^5.1.1"
+  }
+}

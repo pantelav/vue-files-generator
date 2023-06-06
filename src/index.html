@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue files generator</title>
+  <style>
+    html,
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    input:focus {
+      outline: none;
+    }
+
+    .container {
+      width: 400px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      background-color: #242424;
+      border: 1px solid #fff9f7;
+      border-radius: 5px;
+    }
+
+    .input {
+      padding: 10px;
+      background-color: #2f2f2f;
+      border: 1px solid #42b883;
+      border-radius: 5px;
+      color: #fff9f7;
+      transition: all .3s;
+    }
+
+    .input:focus {
+      box-shadow: 0 0 8px 1px #42b88349;
+    }
+
+    .group {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .group div {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .radio-group {
+      justify-content: flex-start;
+      gap: 30px;
+    }
+
+    .subtitle {
+      margin: -5px 0;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .control {
+      accent-color: #42b579;
+      background-color: #fff9f7;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      color: #fff9f7;
+      background-color: #42b579;
+      border: none;
+      border-radius: 5px;
+      transition: all .3s;
+      cursor: pointer;
+    }
+
+    .default {
+      background: transparent;
+      color: #fff9f7;
+      border: 1px solid #fff9f7;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .btn:disabled {
+      background: gray;
+      cursor: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <from class="container">
+    <input type="text" placeholder="File name, or comma-separated file names" class="input" autofocus>
+    <div class="radio-group group">
+      <div class="radio">
+        <input class="control radio-mode" type="radio" name="mode" id="capi" value="capi">
+        <label for="capi">Composition Api</label>
+      </div>
+
+      <div class="radio">
+        <input class="control radio-mode" type="radio" name="mode" id="oapi" value="oapi">
+        <label for="oapi">Option Api</label>
+      </div>
+    </div>
+
+    <div class="check-group group">
+      <div>
+        <input class="control" type="checkbox" name="addition" value="ts" id="ts">
+        <label for="ts">Typescript</label>
+      </div>
+
+      <div>
+        <input class="control" type="checkbox" name="addition" value="scoped" id="scoped">
+        <label for="scoped">Style scoped</label>
+      </div>
+
+      <div>
+        <input class="control" type="radio" name="addition" value="css" id="css">
+        <label for="css">CSS</label>
+      </div>
+
+      <div>
+        <input class="control" type="radio" name="addition" value="scss" id="scss">
+        <label for="scss">SCSS</label>
+      </div>
+
+      <div>
+        <input class="control" type="radio" name="addition" value="sass" id="sass">
+        <label for="sass">SASS</label>
+      </div>
+    </div>
+
+    <p class="subtitle">Imports</p>
+
+    <div class="group">
+      <div>
+        <input class="control" type="checkbox" name="import" value="ref" id="ref">
+        <label for="ref">ref</label>
+      </div>
+
+      <div>
+        <input class="control" type="checkbox" name="import" value="computed" id="computed">
+        <label for="computed">computed</label>
+      </div>
+
+      <div>
+        <input class="control" type="checkbox" name="import" value="reactive" id="reactive">
+        <label for="reactive">reactive</label>
+      </div>
+
+      <div>
+        <input class="control" type="checkbox" name="import" value="onMounted" id="onMounted">
+        <label for="onMounted">onMounted</label>
+      </div>
+
+      <div>
+        <input class="control" type="checkbox" name="import" value="watch" id="watch">
+        <label for="watch">watch</label>
+      </div>
+    </div>
+
+    <div class="btn-container">
+      <button class="default">Save configuration as default</button>
+      <button type="submit" class="btn" disabled>Create file</button>
+    </div>
+  </from>
+  <script>
+    window.onload = () => {
+      const vscode = acquireVsCodeApi()
+      const input = document.querySelector('.input')
+      const btn = document.querySelector('.btn')
+      const defaultBtn = document.querySelector('.default')
+
+      vscode.postMessage({ command: 'getConfig' })
+      window.addEventListener('message', e => {
+        const msg = e.data
+        if (msg.command === 'config') {
+          const config = msg.data
+          setConfig(config)
+        }
+      })
+
+      input.focus()
+      input.addEventListener('input', e => {
+        if (e.target.value.trim() === '') {
+          btn.setAttribute('disabled', true)
+        } else {
+          btn.removeAttribute('disabled')
+        }
+      })
+
+      document.addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault()
+          btn.click()
+        }
+      })
+
+      btn.addEventListener('click', () => {
+        const data = getData()
+        vscode.postMessage({ command: 'closeWebView', data })
+      })
+
+      defaultBtn.addEventListener('click', () => {
+        const data = getData()
+        vscode.postMessage({ command: 'setDefault', data })
+      })
+
+      function getData () {
+        const data = {
+          fileName: [],
+          mode: '',
+          ts: false,
+          scoped: false,
+          css: 'css',
+          ref: false,
+          computed: false,
+          reactive: false,
+          onMounted: false,
+          watch: false
+        }
+        
+        if (input.value.includes(',')) {
+          data.fileName = input.value.split(',').map(word => word.trim())
+        } else {
+          data.fileName = [input.value.trim()]
+        }
+        const radioBtns = document.querySelectorAll('.radio-mode')
+        const additionCheckboxes = document.querySelectorAll('input[type="checkbox"][name="addition"]:checked')
+        const additionRadio = document.querySelector('input[type="radio"][name="addition"]:checked')
+        const importCheckboxes = document.querySelectorAll('input[type="checkbox"][name="import"]:checked')
+
+        for (let i = 0; i < radioBtns.length; i++) {
+          if (radioBtns[i].checked) {
+            data.mode = radioBtns[i].value
+          }
+        }
+        additionCheckboxes.forEach(checkbox => {
+          if (checkbox.value in data) {
+            data[checkbox.value] = true
+          }
+        })
+        importCheckboxes.forEach(checkbox => {
+          if (checkbox.value in data) {
+            data[checkbox.value] = true
+          }
+        })
+        data.css = additionRadio.value
+        return data
+      }
+
+      function setConfig (config) {
+        const radioModes = document.querySelectorAll('.radio-mode')
+        const additionCheckboxes = document.querySelectorAll('input[type="checkbox"][name="addition"]')
+        const additionRadio = document.querySelectorAll('input[type="radio"][name="addition"]')
+        const importCheckboxes = document.querySelectorAll('input[type="checkbox"][name="import"]')
+        radioModes.forEach(el => {
+          if (el.value == config.mode) {
+            el.checked = true
+          } else {
+            el.checked = false
+          }
+        })
+
+        additionRadio.forEach(el => {
+          if (el.value == config.css) {
+            el.checked = true
+          }
+        })
+
+        additionCheckboxes.forEach(el => {
+          if (el.value in config && config[el.value] === true) {
+            el.checked = true
+          } else {
+            el.checked = false
+          }
+        })
+        importCheckboxes.forEach(el => {
+          if (el.value in config && config[el.value] === true) {
+            el.checked = true
+          } else {
+            el.checked = false
+          }
+        })
+
+      }
+    }
+  </script>
+</body>
+
+</html>
