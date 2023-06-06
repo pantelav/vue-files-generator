@@ -61,6 +61,8 @@ dist/
 !.vscode/*.code-snippets
 .vscode-test
 
+vsc-extension-quickstart.md
+
 # yarn v2
 
 .yarn/cache

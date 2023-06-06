@@ -1,8 +1,14 @@
 {
   "name": "vue-files-generator",
   "displayName": "Vue files generator",
+  "publisher": "pantelav",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/pantelav/vue-files-generator"
+  },
   "description": "Easy way to create .vue files in your project.",
-  "version": "1.0.0",
+  "license": "MIT",
+  "version": "1.0.1",
   "engines": {
     "vscode": "^1.78.0"
   },
@@ -10,6 +16,7 @@
     "Other"
   ],
   "main": "./dist/extension.js",
+  "icon": "./icon.png",
   "contributes": {
     "commands": [
       {

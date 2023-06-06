@@ -10,10 +10,9 @@ That will open a window where you can adjust the file creation options, like Com
 
 You can create one or many files by separating them with a comma.
 
-![demo](demo.gif)
- 
+![demo](https://github.com/pantelav/vue-files-generator/blob/main/demo.gif)
 
-* [Author (github)](https://github.com/pantelav)
-* [Repository](https://help.github.com/articles/markdown-basics/)
+- [Author (github)](https://github.com/pantelav)
+- [Repository](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
